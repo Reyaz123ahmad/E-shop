@@ -1,0 +1,58 @@
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 40px 20px;
+}
+
+.container h1 {
+  margin-bottom: 30px;
+}
+
+.orderList {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.orderCard {
+  background: white;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.orderHeader {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 12px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.orderId {
+  font-weight: 600;
+  color: #2563eb;
+}
+
+.orderDate {
+  color: #6b7280;
+  font-size: 14px;
+}
+
+.orderDetails p {
+  margin: 4px 0;
+}
+
+.statusSuccess {
+  color: #10b981;
+  font-weight: 500;
+}
+
+.loading, .empty {
+  text-align: center;
+  padding: 60px;
+}
+
+.empty h2 {
+  margin-bottom: 10px;
+}

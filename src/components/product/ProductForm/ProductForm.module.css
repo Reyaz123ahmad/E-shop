@@ -1,0 +1,153 @@
+/* ProductForm.module.css - Complete CSS */
+
+.form {
+  width: 100%;
+}
+
+.textareaGroup {
+  margin-bottom: 20px;
+}
+
+.label {
+  display: block;
+  font-size: 14px;
+  font-weight: 500;
+  color: #374151;
+  margin-bottom: 8px;
+}
+
+.textarea {
+  width: 100%;
+  padding: 12px 16px;
+  font-size: 14px;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  font-family: inherit;
+  resize: vertical;
+  transition: all 0.2s ease;
+  background: white;
+}
+
+.textarea:focus {
+  outline: none;
+  border-color: #667eea;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+/* Image Upload Styles */
+.imageUploadGroup {
+  margin-bottom: 24px;
+}
+
+.imagePreview {
+  position: relative;
+  margin-bottom: 16px;
+  display: inline-block;
+}
+
+.imagePreview img {
+  width: 120px;
+  height: 120px;
+  object-fit: cover;
+  border-radius: 12px;
+  border: 2px solid #e5e7eb;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.removeImage {
+  position: absolute;
+  top: -10px;
+  right: -10px;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+  color: white;
+  border: none;
+  cursor: pointer;
+  font-size: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.removeImage:hover {
+  transform: scale(1.1);
+  background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+}
+
+.fileInput {
+  width: 100%;
+  padding: 12px;
+  border: 2px dashed #e5e7eb;
+  border-radius: 12px;
+  margin-bottom: 16px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  background: #f9fafb;
+}
+
+.fileInput:hover {
+  border-color: #667eea;
+  background: #f3f4f6;
+}
+
+.orDivider {
+  text-align: center;
+  color: #9ca3af;
+  font-size: 12px;
+  margin: 16px 0;
+  position: relative;
+  font-weight: 500;
+}
+
+.orDivider::before,
+.orDivider::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  width: 42%;
+  height: 1px;
+  background: linear-gradient(to right, transparent, #e5e7eb, transparent);
+}
+
+.orDivider::before {
+  left: 0;
+}
+
+.orDivider::after {
+  right: 0;
+}
+
+.submitError {
+  color: #dc2626;
+  font-size: 14px;
+  margin-top: 16px;
+  padding: 10px;
+  background: #fef2f2;
+  border-radius: 8px;
+  text-align: center;
+}
+
+/* Responsive */
+@media (max-width: 480px) {
+  .textarea {
+    padding: 10px 14px;
+  }
+
+  .imagePreview img {
+    width: 100px;
+    height: 100px;
+  }
+
+  .fileInput {
+    padding: 10px;
+    font-size: 13px;
+  }
+
+  .orDivider {
+    font-size: 11px;
+  }
+}

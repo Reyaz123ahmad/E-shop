@@ -1,0 +1,57 @@
+/* OTP container */
+.otpContainer {
+  width: 100%;
+}
+
+/* OTP inputs wrapper - flexbox se saath mein laao */
+.otpInputs {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  margin-bottom: 8px;
+}
+
+/* Single OTP input box */
+.otpInput {
+  width: 50px;
+  height: 60px;
+  text-align: center;
+  font-size: 24px;
+  font-weight: 600;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+}
+
+/* OTP input focus */
+.otpInput:focus {
+  outline: none;
+  border-color: #2563eb;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+
+/* OTP input error state */
+.otpInputError {
+  border-color: #dc2626;
+}
+
+/* Error message */
+.errorMsg {
+  display: block;
+  text-align: center;
+  font-size: 12px;
+  color: #dc2626;
+}
+
+/* Mobile responsive - choti screen pe input box chote */
+@media (max-width: 480px) {
+  .otpInput {
+    width: 40px;
+    height: 50px;
+    font-size: 20px;
+  }
+  
+  .otpInputs {
+    gap: 8px;
+  }
+}

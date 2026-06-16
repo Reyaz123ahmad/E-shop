@@ -1,0 +1,73 @@
+/* Button base styles */
+.button {
+  padding: 12px 24px;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+/* Disabled state - API call chal rahi ho to yeh apply hoga */
+.button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Primary variant - login, signup, submit buttons ke liye */
+.primary {
+  background-color: #2563eb;
+  color: white;
+}
+
+.primary:hover:not(:disabled) {
+  background-color: #1d4ed8;
+}
+
+/* Secondary variant - cancel, back buttons ke liye */
+/* .secondary {
+  background-color: #e5e7eb;
+  color: #374151;
+} */
+
+/* Secondary - Teal/Green gradient (accha color) */
+.button.secondary {
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  color: white;
+}
+
+
+.secondary:hover:not(:disabled) {
+  background-color: #d1d5db;
+}
+
+/* Danger variant - delete, logout buttons ke liye */
+.danger {
+  background-color: #dc2626;
+  color: white;
+}
+
+/* Full width - form submit buttons ke liye */
+.fullWidth {
+  width: 100%;
+}
+
+/* Spinner - loading state mein dikhega */
+.spinner {
+  width: 20px;
+  height: 20px;
+  border: 2px solid white;
+  border-top: 2px solid transparent;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
