@@ -29,7 +29,7 @@ app.use(cors({
         'http://localhost:3000',
         'http://localhost:5176',
         'http://localhost:5177',
-        'https://e-shop-beta-eight.vercel.app/'
+        'https://e-shop-beta-eight.vercel.app'
     ],  // ← Fix: use array
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
     allowedHeaders: ['Content-Type', 'Authorization'],
