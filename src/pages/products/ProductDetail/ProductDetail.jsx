@@ -1,12 +1,12 @@
-// // GET PRODUCT BY ID - Page
-import { useEffect, useState } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
-import { useDispatch, useSelector } from 'react-redux';
-import useProductDetail from './useProductDetail';
-import { productService } from '../../../services/productService';
-import { deleteProductSuccess, productStart, productFail } from '../../../slices/productSlice';
-import Button from '../../../components/common/Button/Button';
-import styles from './ProductDetail.module.css';
+// // // GET PRODUCT BY ID - Page
+// import { useEffect, useState } from 'react';
+// import { useParams, useNavigate } from 'react-router-dom';
+// import { useDispatch, useSelector } from 'react-redux';
+// import useProductDetail from './useProductDetail';
+// import { productService } from '../../../services/productService';
+// import { deleteProductSuccess, productStart, productFail } from '../../../slices/productSlice';
+// import Button from '../../../components/common/Button/Button';
+// import styles from './ProductDetail.module.css';
 
 // const ProductDetail = () => {
 //   console.log("🚀 PRODUCT DETAIL COMPONENT MOUNTED");
@@ -95,11 +95,17 @@ import styles from './ProductDetail.module.css';
 
 
 
+// GET PRODUCT BY ID - Page with Payment Integration
+import { useEffect, useState } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
+import useProductDetail from './useProductDetail';
+import { productService } from '../../../services/productService';
+import { deleteProductSuccess, productStart, productFail } from '../../../slices/productSlice';
 import { paymentService } from '../../../services/paymentService';
-import { loadRazorpayScript } from '../../../utils/razorpay';
-
-
-import useOrders from '../../../hooks/useOrders';
+import { loadAndWaitForRazorpay, openRazorpayCheckout } from '../../../utils/razorpay';
+import Button from '../../../components/common/Button/Button';
+import styles from './ProductDetail.module.css';
 
 const ProductDetail = () => {
   console.log("🚀 PRODUCT DETAIL COMPONENT MOUNTED");
@@ -109,7 +115,6 @@ const ProductDetail = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  // Quantity state for Buy Now
   const [quantity, setQuantity] = useState(1);
   const [paymentLoading, setPaymentLoading] = useState(false);
 
@@ -117,8 +122,10 @@ const ProductDetail = () => {
   const { currentProduct, loading } = useSelector((state) => state.product);
   const { user } = useSelector((state) => state.auth);
   
+  // ✅ Check if user is Admin
+  const isAdmin = user?.role === 'Admin';
+   
   const { fetchProduct } = useProductDetail();
-  const { addOrder } = useOrders();
   
   useEffect(() => {
     if (productId) {
@@ -129,7 +136,7 @@ const ProductDetail = () => {
   console.log("Current Product:", currentProduct);
   console.log("Image URL:", currentProduct?.image);
 
-  // Delete handler
+  // ✅ Delete handler - Only for Admin
   const handleDelete = async () => {
     if (window.confirm(`Are you sure you want to delete "${currentProduct?.productName}"?`)) {
       try {
@@ -153,51 +160,31 @@ const ProductDetail = () => {
     setPaymentLoading(true);
     
     try {
-      // Step 1: Load Razorpay script
-      await loadRazorpayScript();
+      // ✅ Step 1: Load Razorpay script and wait for it to be ready
+      console.log("📥 Loading Razorpay...");
+      await loadAndWaitForRazorpay();
+      console.log("✅ Razorpay loaded successfully!");
       
-      // Step 2: Create order on backend - quantity bhi bhejo
-      const orderResponse = await paymentService.capturePayment(
-        currentProduct._id,  // ✅ Sirf ID - pehla parameter
-        quantity             // ✅ Quantity - doosra parameter
-      );
+      // ✅ Step 2: Create order on backend
+      const orderResponse = await paymentService.capturePayment({
+        product_id: currentProduct._id,
+        quantity: quantity
+      });
       const orderData = orderResponse.data;
       
       console.log("Order created:", orderData);
       
-      // Step 3: Open Razorpay checkout
-      const options = {
+      // ✅ Step 3: Open Razorpay checkout
+      const paymentResponse = await openRazorpayCheckout({
         key: import.meta.env.VITE_RAZORPAY_KEY,
         amount: orderData.amount,
         currency: orderData.currency,
         name: orderData.productName || currentProduct.productName,
         description: `${orderData.productDescription || currentProduct.productName} x ${quantity}`,
         order_id: orderData.orderId,
-        // ✅ IMAGE PROPERTY HATAO - CORS error fix
-        handler: async (response) => {
-          // Payment success - backend verify karega via webhook
-          console.log("Payment successful:", response);
-          
-          // ✅ Add order to Redux store
-          addOrder({
-            _id: response.razorpay_order_id,
-            itemName: currentProduct.productName,
-            totalAmount: currentProduct.price * quantity,
-            quantity: quantity,
-            createdAt: new Date().toISOString(),
-            paymentId: response.razorpay_payment_id
-          });
-          
-          // ✅ Show success message
-          alert(`✅ Payment Successful!\nPayment ID: ${response.razorpay_payment_id}\nProduct: ${currentProduct.productName}\nQuantity: ${quantity}\nAmount: ₹${currentProduct.price * quantity}`);
-          
-          // ✅ Navigate to orders page
-          navigate('/orders');
-        },
         prefill: {
           name: user?.name || '',
           email: user?.email || '',
-          contact: user?.phone || ''
         },
         theme: {
           color: '#2563eb'
@@ -208,18 +195,17 @@ const ProductDetail = () => {
             setPaymentLoading(false);
           }
         }
-      };
+      });
       
-      const razorpay = new window.Razorpay(options);
-      razorpay.open();
+      // ✅ Payment success
+      console.log("Payment successful:", paymentResponse);
+      alert(`✅ Payment Successful!\nPayment ID: ${paymentResponse.razorpay_payment_id}\nProduct: ${currentProduct.productName}\nQuantity: ${quantity}\nAmount: ₹${currentProduct.price * quantity}`);
+      
+      navigate('/orders');
       
     } catch (error) {
       console.error("Payment failed:", error);
-      
-      // ✅ Better error message
-      const errorMsg = error.response?.data?.message || error.message || 'Payment failed. Please try again.';
-      alert(`❌ Payment Failed: ${errorMsg}`);
-      
+      alert(error.message || 'Payment failed. Please try again.');
     } finally {
       setPaymentLoading(false);
     }
@@ -256,44 +242,52 @@ const ProductDetail = () => {
           <p className={styles.price}>₹{currentProduct.price}</p>
           <p className={styles.description}>{currentProduct.description}</p>
           
-          {/* ✅ Quantity Selector */}
-          <div className={styles.quantitySection}>
-            <label htmlFor="quantity">Quantity:</label>
-            <input
-              id="quantity"
-              type="number"
-              min="1"
-              max="10"
-              value={quantity}
-              onChange={(e) => setQuantity(Math.max(1, parseInt(e.target.value) || 1))}
-              className={styles.quantityInput}
-            />
-          </div>
+          {/* ✅ Quantity Selector - Sirf Customer ke liye */}
+          {!isAdmin && (
+            <div className={styles.quantitySection}>
+              <label htmlFor="quantity">Quantity:</label>
+              <input
+                id="quantity"
+                type="number"
+                min="1"
+                max="10"
+                value={quantity}
+                onChange={(e) => setQuantity(Math.max(1, parseInt(e.target.value) || 1))}
+                className={styles.quantityInput}
+              />
+            </div>
+          )}
           
           <div className={styles.actions}>
-            {/* ✅ BUY NOW BUTTON */}
-            <Button 
-              variant="primary" 
-              onClick={handleBuyNow}
-              loading={paymentLoading}
-              className={styles.buyNowBtn}
-            >
-              Buy Now - ₹{currentProduct.price * quantity}
-            </Button>
+            {/* ✅ Admin: Edit + Delete buttons */}
+            {isAdmin && (
+              <>
+                <Button 
+                  variant="primary" 
+                  onClick={() => navigate(`/products/edit/${productId}`)}
+                >
+                  Edit Product
+                </Button>
+                <Button 
+                  variant="danger" 
+                  onClick={handleDelete}
+                >
+                  Delete Product
+                </Button>
+              </>
+            )}
             
-            <Button 
-              variant="primary" 
-              onClick={() => navigate(`/products/edit/${productId}`)}
-            >
-              Edit Product
-            </Button>
-            
-            <Button 
-              variant="danger" 
-              onClick={handleDelete}
-            >
-              Delete Product
-            </Button>
+            {/* ✅ Customer: Buy Now button */}
+            {!isAdmin && (
+              <Button 
+                variant="primary" 
+                onClick={handleBuyNow}
+                loading={paymentLoading}
+                className={styles.buyNowBtn}
+              >
+                Buy Now - ₹{currentProduct.price * quantity}
+              </Button>
+            )}
           </div>
         </div>
       </div>

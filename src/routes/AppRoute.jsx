@@ -7,7 +7,7 @@ import ChangePassword from '../pages/auth/ChangePassword/ChangePassword';
 import ForgotPassword from '../pages/auth/ForgotPassword/ForgotPassword';
 import Confirmation from '../pages/auth/ForgotPassword/Confirmation';
 import ResetPassword from '../pages/auth/ResetPasword/ResetPassword';
-
+import Profile from '../pages/Profile/Profile';
 // Product Pages - ✅ NEW
 import ProductList from '../pages/products/ProductList/ProductList';
 import ProductDetail from '../pages/products/ProductDetail/ProductDetail';
@@ -15,7 +15,11 @@ import CreateProduct from '../pages/products/CreateProduct/CreateProduct';
 import EditProduct from '../pages/products/EditProduct/EditProduct';
 import Dashboard from '../pages/Dashboard/Dashboard';
 import { useSelector } from 'react-redux';
+// ✅ New Pages
+import Home from '../pages/Home/Home';
 
+import About from '../pages/About/About';
+import Contact from '../pages/Contact/Contact';
 import Orders from '../pages/Orders/Order';
 // PrivateRoute import - protected routes ke liye
 import PrivateRoute from './PrivateRoutes';
@@ -32,6 +36,10 @@ const AppRoutes = () => {
     
       <Routes>
         {/* Public routes - sirf non-logged users ke liye */}
+        <Route path="/" element={<Home />} />
+        
+        <Route path="/about" element={<About />} />
+        <Route path="/contact" element={<Contact />} />
         <Route path="/login" element={
           <PublicRoute>
             <Login />
@@ -62,7 +70,12 @@ const AppRoutes = () => {
             <ResetPassword />
           </PublicRoute>
         } />
-
+        
+        <Route path="/profile" element={
+          <PrivateRoute>
+            <Profile />
+          </PrivateRoute>
+        } />
         {/* Product CRUD Routes */}
         <Route path="/products" element={
           <PrivateRoute><ProductList /></PrivateRoute>

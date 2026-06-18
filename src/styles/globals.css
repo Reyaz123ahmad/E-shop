@@ -108,3 +108,17 @@ input, textarea, select {
 ::-webkit-scrollbar-thumb:hover {
   background: #a1a1a1;
 }
+
+
+
+
+app-wrapper {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.main-content {
+  flex: 1;
+  /* This pushes footer to bottom */
+}

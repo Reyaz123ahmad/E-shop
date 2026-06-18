@@ -50,19 +50,10 @@ const Dashboard = () => {
           )}
           
           <div className={styles.buttonGroup}>
-            <Link to="/change-password" className={styles.linkButton}>
-              <FiLock /> Change Password
-            </Link>
             <Link to="/products" className={styles.linkButton}>
               📦 Manage Products
             </Link>
-            <Button
-              onClick={handleLogout}
-              variant="danger"
-              fullWidth
-            >
-              <FiLogOut /> Logout
-            </Button>
+            
           </div>
         </div>
         

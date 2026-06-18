@@ -87,11 +87,16 @@ exports.signup = async(req, res) =>{
             })
         }
         console.log("No OTP record found");
-        // ✅ Step 2: Check OTP expiry
-        if(otpRecord.createdAt < Date.now()){
+        // ✅ Step 2: Check OTP expiry - SAHI TARIKA
+        const otpCreatedTime = new Date(otpRecord.createdAt).getTime();
+        const currentTime = Date.now();
+        const expiryTime = 5 * 60 * 1000; // 5 minutes
+        
+        if(currentTime - otpCreatedTime > expiryTime){
+            console.log("❌ OTP expired for:", email);
             return res.status(400).json({
                 success: false,
-                message: "OTP expired"
+                message: "OTP expired. Please request a new one."
             })
         }
 
@@ -176,6 +181,11 @@ exports.login = async(req, res) =>{
             const userData = {
                     email: user.email,
                     name: user.name,
+                    phone: user.phone,
+                    address: user.address,
+                    city: user.city,
+                    pincode: user.pincode,
+                    imageUrl: user.imageUrl,
                     role: user.role,
                     id: user._id
             }

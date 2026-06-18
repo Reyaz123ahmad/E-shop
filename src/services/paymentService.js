@@ -1,24 +1,28 @@
-// Payment API calls - Razorpay integration
 import api from './api';
 
 export const paymentService = {
   
-  // ✅ CAPTURE PAYMENT - Create Razorpay order for direct product purchase
-  // Call hota hai: ProductDetail.jsx mein Buy Now click par
-  capturePayment: (productId, quantity) => {
-    return api.post('/payment/capture-payment', {
-      product_id: String(productId), 
-      quantity: quantity
-    });
+  // ✅ CAPTURE PAYMENT
+  capturePayment: (data) => {
+    console.log("📤 capturePayment called with:", data);
+    return api.post('/payment/capture-payment', data);
   },
   
-  // ✅ VERIFY SIGNATURE - Webhook verification (optional, backend handles)
-  // Sirf reference ke liye - backend webhook handle karega
-  verifySignature: (paymentData) => {
-    return api.post('/payment/verifySignature', paymentData);
+  // ✅ VERIFY PAYMENT
+  verifyPayment: (data) => {
+    console.log("📤 verifyPayment called with:", data);
+    return api.post('/payment/verifySignature', data);
   },
-  // GET ALL ORDERS - User ke saare orders
-  getMyOrders: () => {
-    return api.get('/payment/my-orders');
+  
+  // ✅ GET MY ORDERS
+  getMyOrders: async () => {
+    console.log("🔄 getMyOrders called");
+    try {
+      const response = await api.get('/payment/my-orders');
+      return response.data;
+    } catch (error) {
+      console.error("❌ getMyOrders error:", error);
+      throw error;
+    }
   }
 };
