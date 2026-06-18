@@ -11,7 +11,7 @@ export const paymentService = {
   // ✅ VERIFY PAYMENT
   verifyPayment: (data) => {
     console.log("📤 verifyPayment called with:", data);
-    return api.post('/payment/verifySignature', data);
+    return api.post('/payment/verify-payment', data);
   },
   
   // ✅ GET MY ORDERS
