@@ -8,10 +8,14 @@ require('dotenv').config()
 
 exports.capturePayment = async(req, res) =>{
     console.log("capture payment api hitted")
+    console.log('Request body', req.body)
+    console.log('Request user', req.user)
     try{
         const {product_id, quantity} = req.body
         const userId = req.user.id
-
+        console.log("Product ID:", product_id);
+        console.log("Quantity:", quantity);
+        console.log("User ID:", userId);
         if(!product_id){
             return res.status(400).json({
                 success: false,

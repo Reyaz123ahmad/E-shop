@@ -5,6 +5,8 @@ require('dotenv').config();
 exports.auth = async( req, res, next ) =>{
     try{
         const token = req.body?.token || req.cookies?.token || req.header("Authorization")?.replace("Bearer ", "");
+        console.log("🔐 Auth middleware");
+        console.log("Token:", token ? "Present ✅" : "Missing ❌");
         if( !token ){
             return res.status( 400 ).json({
                 success: false,
@@ -14,7 +16,7 @@ exports.auth = async( req, res, next ) =>{
 
         try{
             const decode = await jwt.verify( token, process.env.JWT_SECRET );
-            console.log(decode)
+            console.log('decode user', decode)
             req.user = decode;
         }catch(err){
             console.log('Invalid token error', err)
