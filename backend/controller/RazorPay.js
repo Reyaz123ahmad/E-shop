@@ -460,7 +460,7 @@ exports.verifyPayment = async (req, res) => {
     }
 }
 
-// ✅ 3. WEBHOOK - SIRF YAHI ORDER BANAYEGA
+// ✅ 3. WEBHOOK - SIRF 'payment.captured' EVENT PROCESS KARO
 exports.verifySignature = async (req, res) => {
     try {
         console.log("📨 Webhook called")
@@ -485,12 +485,14 @@ exports.verifySignature = async (req, res) => {
 
         // ✅ SIRF 'payment.captured' EVENT PROCESS KARO
         if (req.body.event !== 'payment.captured') {
-            console.log(`⏭️ Skipping event: ${req.body.event}`)
+            console.log(`⏭️ Skipping event: ${req.body.event} - Order not created`)
             return res.status(200).json({
                 success: true,
                 message: `Event ${req.body.event} ignored`
             })
         }
+
+        console.log("✅ Processing payment.captured event - Creating order...")
 
         const payment = req.body.payload.payment.entity
         const notes = payment.notes || {}
@@ -501,10 +503,6 @@ exports.verifySignature = async (req, res) => {
         const productId = notes.product_id
         const qty = notes.quantity || 1
         const totalAmount = notes.productPrice * qty
-
-        console.log("📦 Creating order for user:", userId)
-        console.log("📦 Product:", productId)
-        console.log("💰 Amount:", totalAmount)
 
         // ✅ Check user
         const user = await User.findById(userId)
@@ -533,7 +531,7 @@ exports.verifySignature = async (req, res) => {
             })
         }
 
-        // ✅ CREATE ORDER - SIRF WEBHOOK SE
+        // ✅ CREATE ORDER
         const newOrder = await Order.create({
             itemName: notes.productName || "Product",
             itemDescription: notes.productDescription || "",
@@ -581,7 +579,7 @@ exports.verifySignature = async (req, res) => {
             message: "Failed to process webhook"
         })
     }
-}
+};
 
 // ✅ 4. GET MY ORDERS
 exports.getMyOrders = async (req, res) => {
