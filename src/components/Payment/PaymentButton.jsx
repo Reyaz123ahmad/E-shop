@@ -30,6 +30,7 @@ const PaymentButton = ({
 
   // ✅ PAYMENT HANDLER WITH SIGNATURE VERIFICATION
   const handlePayment = async () => {
+    console.log(import.meta.env.VITE_RAZORPAY_KEY);
     if (!product) {
       toast.error('Product not found');
       return;
