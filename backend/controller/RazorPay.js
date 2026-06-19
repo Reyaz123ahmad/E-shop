@@ -337,12 +337,12 @@ exports.verifyPayment = async (req, res) => {
         console.log("✅ Order created:", newOrder._id)
 
         // ✅ Send email
-        try {
-            await emailService.orderConfirmationEmailService(user, newOrder)
-            console.log("✅ Email sent")
-        } catch (emailError) {
-            console.log("⚠️ Email error:", emailError.message)
-        }
+        // try {
+        //     await emailService.orderConfirmationEmailService(user, newOrder)
+        //     console.log("✅ Email sent")
+        // } catch (emailError) {
+        //     console.log("⚠️ Email error:", emailError.message)
+        // }
 
         return res.status(200).json({
             success: true,
@@ -488,39 +488,3 @@ exports.getMyOrders = async (req, res) => {
     }
 }
 
-// ✅ 5. SEND PAYMENT SUCCESS EMAIL (Optional)
-exports.sendPaymentSuccessEmail = async (req, res) => {
-    try {
-        const { orderId, paymentId, amount } = req.body
-        const userId = req.user.id
-
-        if (!orderId || !paymentId || !amount) {
-            return res.status(400).json({
-                success: false,
-                message: "Missing required fields"
-            })
-        }
-
-        const user = await User.findById(userId)
-        if (!user) {
-            return res.status(404).json({
-                success: false,
-                message: "User not found"
-            })
-        }
-
-        await emailService.orderConfirmationEmailService(user, { _id: orderId, totalAmount: amount })
-
-        return res.status(200).json({
-            success: true,
-            message: "Email sent successfully"
-        })
-
-    } catch (error) {
-        console.error("❌ Send email error:", error)
-        return res.status(500).json({
-            success: false,
-            message: "Failed to send email"
-        })
-    }
-}
