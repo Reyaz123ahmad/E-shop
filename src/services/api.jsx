@@ -7,7 +7,7 @@ import { API_BASE_URL } from '../config';
 // axios instance create kiya
 const api = axios.create({
   baseURL: API_BASE_URL,  // .env se aayega
-  timeout: 10000,          // 10 second timeout
+  timeout: 50000,          // 10 second timeout
 });
 
 // request interceptor - har request se pehle token attach karega
