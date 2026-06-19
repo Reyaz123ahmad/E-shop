@@ -402,7 +402,7 @@ exports.capturePayment = async (req, res) => {
     }
 }
 
-// ✅ 2. VERIFY PAYMENT - FRONTEND SE
+// ✅ 2. VERIFY PAYMENT - SIRF VERIFY KARO, ORDER MAT BANAO
 exports.verifyPayment = async (req, res) => {
     try {
         console.log("🔐 verifyPayment called")
@@ -443,62 +443,12 @@ exports.verifyPayment = async (req, res) => {
             })
         }
 
-        console.log("✅ Signature verified")
+        console.log("✅ Signature verified - Order will be created by webhook")
 
-        // ✅ CREATE ORDER
-        const user = await User.findById(userId)
-        if (!user) {
-            return res.status(404).json({
-                success: false,
-                message: "User not found"
-            })
-        }
-
-        // ✅ CHECK - ORDER ALREADY EXISTS?
-        const existingOrder = await Order.findOne({ 
-            $or: [
-                { razorpayOrderId: razorpay_order_id },
-                { paymentId: razorpay_payment_id }
-            ]
-        })
-
-        if (existingOrder) {
-            console.log("⚠️ Order already exists:", existingOrder._id)
-            return res.status(200).json({
-                success: true,
-                message: "Order already exists",
-                order: existingOrder
-            })
-        }
-
-        // Get product details from Razorpay order notes
-        const razorpayOrder = await instance.orders.fetch(razorpay_order_id)
-        const notes = razorpayOrder.notes || {}
-
-        const newOrder = await Order.create({
-            itemName: notes.productName || "Product",
-            itemDescription: notes.productDescription || "",
-            totalAmount: notes.productPrice * (notes.quantity || 1),
-            quantity: notes.quantity || 1,
-            address: {
-                street: user.address?.street || "NA",
-                pin: user.address?.pin || "NA"
-            },
-            orderedBy: userId,
-            itemId: notes.product_id || product_id,
-            paymentId: razorpay_payment_id,
-            razorpayOrderId: razorpay_order_id,
-            paymentStatus: "Paid",
-            orderStatus: "Processing"
-        })
-
-        console.log("✅ Order created:", newOrder._id)
-
-        
+        // ✅ SIRF VERIFY KARO, ORDER MAT BANAO
         return res.status(200).json({
             success: true,
-            message: "Payment verified and order created",
-            order: newOrder
+            message: "Payment verified successfully"
         })
 
     } catch (error) {
@@ -510,7 +460,7 @@ exports.verifyPayment = async (req, res) => {
     }
 }
 
-// ✅ 3. WEBHOOK - RAZORPAY SE (SIRF payment.captured PROCESS KARO)
+// ✅ 3. WEBHOOK - SIRF YAHI ORDER BANAYEGA
 exports.verifySignature = async (req, res) => {
     try {
         console.log("📨 Webhook called")
@@ -519,7 +469,6 @@ exports.verifySignature = async (req, res) => {
         const webhookSecret = process.env.RAZORPAY_WEBHOOK_SECRET
         const signature = req.headers['x-razorpay-signature']
 
-        // ✅ Verify webhook signature
         const shasum = crypto.createHmac('sha256', webhookSecret)
         shasum.update(JSON.stringify(req.body))
         const digest = shasum.digest('hex')
@@ -534,7 +483,7 @@ exports.verifySignature = async (req, res) => {
 
         console.log("✅ Webhook signature verified")
 
-        // ✅ SIRF 'payment.captured' EVENT PROCESS KARO - BAAKI IGNORE KARO
+        // ✅ SIRF 'payment.captured' EVENT PROCESS KARO
         if (req.body.event !== 'payment.captured') {
             console.log(`⏭️ Skipping event: ${req.body.event}`)
             return res.status(200).json({
@@ -552,6 +501,10 @@ exports.verifySignature = async (req, res) => {
         const productId = notes.product_id
         const qty = notes.quantity || 1
         const totalAmount = notes.productPrice * qty
+
+        console.log("📦 Creating order for user:", userId)
+        console.log("📦 Product:", productId)
+        console.log("💰 Amount:", totalAmount)
 
         // ✅ Check user
         const user = await User.findById(userId)
@@ -573,7 +526,6 @@ exports.verifySignature = async (req, res) => {
 
         if (existingOrder) {
             console.log("⚠️ Order already exists:", existingOrder._id)
-            console.log("✅ Skipping duplicate webhook")
             return res.status(200).json({
                 success: true,
                 message: "Order already exists",
@@ -581,7 +533,7 @@ exports.verifySignature = async (req, res) => {
             })
         }
 
-        // ✅ Create order
+        // ✅ CREATE ORDER - SIRF WEBHOOK SE
         const newOrder = await Order.create({
             itemName: notes.productName || "Product",
             itemDescription: notes.productDescription || "",
@@ -618,7 +570,8 @@ exports.verifySignature = async (req, res) => {
 
         return res.status(200).json({
             success: true,
-            message: "Payment verified and order created"
+            message: "Payment verified and order created",
+            order: newOrder
         })
 
     } catch (error) {
