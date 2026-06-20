@@ -20,7 +20,8 @@ app.use(express.json())
 
 app.use(fileUpload({
     useTempFiles:true,
-    tempFileDir: '/temp/uploads'
+    //tempFileDir: '/temp/uploads'
+    tempFileDir: os.tmpdir(),
 }))
 
 app.use(cors({
