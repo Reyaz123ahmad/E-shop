@@ -9,6 +9,11 @@ const transporter = nodemailer.createTransport({
     auth: {
         user: process.env.MAIL_USER,
         pass: process.env.MAIL_PASS
+    },
+     // ✅ YEH ADD KARO - IPv4 force karo
+    family: 4,  // 4 = IPv4, 6 = IPv6
+    tls: {
+        rejectUnauthorized: false
     }
 })
 

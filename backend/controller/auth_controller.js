@@ -86,7 +86,7 @@ exports.signup = async(req, res) =>{
                 message: "Invalid OTP"
             })
         }
-        console.log("No OTP record found");
+        
         // ✅ Step 2: Check OTP expiry - SAHI TARIKA
         const otpCreatedTime = new Date(otpRecord.createdAt).getTime();
         const currentTime = Date.now();
@@ -125,7 +125,9 @@ exports.signup = async(req, res) =>{
             isDeleted
         })
 
-        await emailService.welcomeEmailService(newUser)
+       
+        await emailService.welcomeEmailService(newUser);
+    
         return res.status(201).json({
             success: true,
             data: newUser,
