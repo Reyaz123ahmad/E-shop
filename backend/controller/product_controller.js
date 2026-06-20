@@ -1,41 +1,7 @@
 const Product = require('../model/Product')
 const User = require('../model/User')
 require('dotenv').config()
-// Create Product
-// exports.createProduct = async( req, res ) =>{
-//     try{
-//         const { productName, description, price, isDeleted } = req.body;
-//         const userId = req.user.id;
 
-//         if(!productName || !description || !price){
-//             return res.status(400).json({
-//                 success: false,
-//                 message: "Please fill the missing field"
-//             })
-//         }
-
-//         const productPayload = {
-//             productName,
-//             description,
-//             price,
-//             createdBy: userId,
-//             isDeleted
-//         }
-
-//         const newProduct = await Product.create(productPayload)
-//         return res.status(201).json({
-//             success: true,
-//             data: newProduct,
-//             message: "Product created successfully"
-//         })
-//     }catch(err){
-//         console.log(err)
-//         return res.status(500).json({
-//             success: false,
-//             message: "server error"
-//         })
-//     }
-// }
 
 
 // Create Product with image upload
@@ -150,6 +116,7 @@ exports.updateProduct = async(req, res) =>{
     
     try{
         const { productName, description, price, } = req.body;
+         const file = req.files.imageFile;
         const userId = req.user.id;
         const {productId} = req.params;
         const user = await User.findOne({
@@ -170,10 +137,14 @@ exports.updateProduct = async(req, res) =>{
                 message: "product not found"
             })
         }
+         // Use existing upload function
+        const uploadResponse = await uploadFileToCloudinary(file, process.env.FOLDER_NAME);
+        console.log(uploadResponse)
         const updatedProduct = await Product.findByIdAndUpdate({ _id: productId }, {
             productName,
             description,
             price,
+            image: uploadResponse.secure_url,
             updatedBy: userId
         }, {new: true})
 

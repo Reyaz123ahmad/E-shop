@@ -11,6 +11,9 @@ const Dashboard = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   
+  // ✅ Check if user is Admin
+  const isAdmin = user?.role === 'Admin';
+  
   const handleLogout = () => {
     dispatch(logout());
     navigate('/login');
@@ -50,10 +53,17 @@ const Dashboard = () => {
           )}
           
           <div className={styles.buttonGroup}>
-            <Link to="/products" className={styles.linkButton}>
-              📦 Manage Products
-            </Link>
-            
+            {/* ✅ Admin: Manage Products */}
+            {isAdmin ? (
+              <Link to="/products" className={styles.linkButton}>
+                📦 Manage Products
+              </Link>
+            ) : (
+              /* ✅ Customer: Browse Products */
+              <Link to="/products" className={styles.linkButton}>
+                🛍️ Browse Products
+              </Link>
+            )}
           </div>
         </div>
         

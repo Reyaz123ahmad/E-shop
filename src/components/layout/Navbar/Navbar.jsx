@@ -4,18 +4,6 @@ import { useSelector, useDispatch } from 'react-redux';
 import { logout } from '../../../slices/authSlice';
 import styles from './Navbar.module.css';
 
-
-
-
-
-
-
-
-
-
-
-
-
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
