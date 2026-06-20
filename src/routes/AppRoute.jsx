@@ -4,7 +4,7 @@ import { Routes, Route, Navigate } from 'react-router-dom';
 import Login from '../pages/auth/Login/Login';
 import Signup from '../pages/auth/Signup/Signup';
 import ChangePassword from '../pages/auth/ChangePassword/ChangePassword';
-import ForgotPassword from '../pages/auth/forgotPassword/forgotPassword';
+import ForgotPassword from '../pages/auth/ForgotPassword/ForgotPassword';
 import Confirmation from '../pages/auth/ForgotPassword/Confirmation';
 import ResetPassword from '../pages/auth/ResetPasword/ResetPassword';
 import Profile from '../pages/Profile/Profile';
