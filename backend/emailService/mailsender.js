@@ -3,7 +3,8 @@ const EmailTemplate = require('../emailTemplate/template')
 
 require('dotenv').config()
 const transporter = nodemailer.createTransport({
-    host: process.env.MAIL_HOST,
+    // host: process.env.MAIL_HOST,
+    service: 'gmail',
     port: 587,
     secure: false,
     auth: {
