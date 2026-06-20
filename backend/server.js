@@ -8,6 +8,7 @@ const paymentRoutes = require('./routes/payment_routes')
 const cloudinary=require('./config/cloudinary')
 const fileUpload=require('express-fileupload')
 const cors = require('cors')
+
 dotenv.config()
 const PORT = process.env.PORT
 
@@ -17,8 +18,8 @@ cloudinary.cloudinaryConnect();
 app.use(express.json())
 
 app.use(fileUpload({
-    useTempFiles:true,
-    tempFileDir:'/temp/'
+    useTempFiles:false,
+    // tempFileDir: path.join(__dirname, 'tmp')  
 }))
 
 app.use(cors({
