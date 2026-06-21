@@ -1,36 +1,37 @@
 // Product API calls - sare CRUD operations yahan
-// Kahan use hota hai: Pages/products/* ke hooks mein
-
 import api from './api';
 
 export const productService = {
   
-  // 1. CREATE PRODUCT - POST /api/products
-  // Call hota hai: CreateProduct.jsx se
+  // ✅ CREATE PRODUCT - FormData ke liye
   createProduct: (productData) => {
-    return api.post('/product/', productData);
+    return api.post('/product/', productData, {
+        headers: {
+            'Content-Type': 'multipart/form-data'
+        }
+    });
   },
   
-  // 2. GET ALL PRODUCTS - GET /api/products
-  // Call hota hai: ProductList.jsx se
+  // GET ALL PRODUCTS
   getAllProducts: () => {
     return api.get('/product/');
   },
   
-  // 3. GET PRODUCT BY ID - GET /api/products/:id
-  // Call hota hai: ProductDetail.jsx se
+  // GET PRODUCT BY ID
   getProductById: (productId) => {
     return api.get(`/product/${productId}`);
   },
   
-  // 4. UPDATE PRODUCT - PUT /api/products/:id
-  // Call hota hai: EditProduct.jsx se
+  // ✅ UPDATE PRODUCT - FormData ke liye
   updateProduct: (productId, productData) => {
-    return api.put(`/product/update/${productId}`, productData);
+    return api.put(`/product/update/${productId}`, productData, {
+        headers: {
+            'Content-Type': 'multipart/form-data'
+        }
+    });
   },
   
-  // 5. DELETE PRODUCT - DELETE /api/products/:id
-  // Call hota hai: ProductList.jsx ya ProductDetail.jsx se
+  // DELETE PRODUCT
   deleteProduct: (productId) => {
     return api.delete(`/product/delete/${productId}`);
   }

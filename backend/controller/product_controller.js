@@ -112,13 +112,67 @@ exports.getProductById = async(req, res) =>{
 }
 
 // Update Product
-exports.updateProduct = async(req, res) =>{
+// exports.updateProduct = async(req, res) =>{
     
-    try{
-        const { productName, description, price, } = req.body;
-         const file = req.files.imageFile;
+//     try{
+//         const { productName, description, price, } = req.body;
+//          const file = req.files.imageFile;
+//         const userId = req.user.id;
+//         const {productId} = req.params;
+//         const user = await User.findOne({
+//             _id: userId,
+//             isDeleted: false
+//         })
+
+//         if(!user){
+//             return res.status(400).json({
+//                 success: false,
+//                 message: "Invalid user"
+//             })
+//         }
+//         const product = await Product.findById(productId)
+//         if(!product){
+//             return res.status(404).json({
+//                 success: false,
+//                 message: "product not found"
+//             })
+//         }
+//          // Use existing upload function
+//         const uploadResponse = await uploadFileToCloudinary(file, process.env.FOLDER_NAME);
+//         console.log(uploadResponse)
+//         const updatedProduct = await Product.findByIdAndUpdate({ _id: productId }, {
+//             productName,
+//             description,
+//             price,
+//             image: uploadResponse.secure_url,
+//             updatedBy: userId
+//         }, {new: true})
+
+//         return res.status(200).json({
+//             success: true,
+//             data: updatedProduct,
+//             message: "Product Updated successfully"
+//         })
+//     }catch(err){
+//         console.log(err)
+//         return res.status(500).json({
+//             success: false,
+//             message: "server error"
+//         })
+//     }
+// }
+// Update Product
+exports.updateProduct = async(req, res) => {
+    try {
+        console.log("📦 updateProduct called")
+        console.log("📦 req.files:", req.files)
+        console.log("📦 req.body:", req.body)
+        
+        const { productName, description, price } = req.body;
+        const { productId } = req.params;
         const userId = req.user.id;
-        const {productId} = req.params;
+
+        // Check user
         const user = await User.findOne({
             _id: userId,
             isDeleted: false
@@ -130,38 +184,59 @@ exports.updateProduct = async(req, res) =>{
                 message: "Invalid user"
             })
         }
+
+        // Check product
         const product = await Product.findById(productId)
         if(!product){
             return res.status(404).json({
                 success: false,
-                message: "product not found"
+                message: "Product not found"
             })
         }
-         // Use existing upload function
-        const uploadResponse = await uploadFileToCloudinary(file, process.env.FOLDER_NAME);
-        console.log(uploadResponse)
-        const updatedProduct = await Product.findByIdAndUpdate({ _id: productId }, {
-            productName,
-            description,
-            price,
-            image: uploadResponse.secure_url,
-            updatedBy: userId
-        }, {new: true})
+
+        // ✅ IMAGE - OPTIONAL!
+        let imageUrl = product.image;  // ✅ Purani image rakho
+
+        // ✅ AGAR FILE HAI TO UPLOAD KARO
+        if (req.files && req.files.imageFile) {
+            const file = req.files.imageFile;
+            console.log("📦 Uploading new image:", file.name);
+            
+            const uploadResponse = await uploadFileToCloudinary(file, process.env.FOLDER_NAME);
+            imageUrl = uploadResponse.secure_url;
+            console.log("✅ New image uploaded:", imageUrl);
+        } else {
+            console.log("📦 No new image, keeping existing:", product.image);
+        }
+
+        // ✅ UPDATE PRODUCT
+        const updatedProduct = await Product.findByIdAndUpdate(
+            { _id: productId },
+            {
+                productName: productName || product.productName,
+                description: description || product.description,
+                price: price || product.price,
+                image: imageUrl,  // ✅ NAYI YA PURI IMAGE
+                updatedBy: userId
+            },
+            { new: true }
+        )
 
         return res.status(200).json({
             success: true,
             data: updatedProduct,
             message: "Product Updated successfully"
         })
-    }catch(err){
-        console.log(err)
+
+    } catch(err) {
+        console.error("❌ Update error:", err)
         return res.status(500).json({
             success: false,
-            message: "server error"
+            message: "Server error",
+            error: err.message
         })
     }
 }
-
 // Delete Product
 exports.deleteProduct = async(req, res) =>{
     try{
