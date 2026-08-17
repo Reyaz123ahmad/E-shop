@@ -130,19 +130,22 @@ const EmailTemplate = require('../emailTemplate/template');
 
 require('dotenv').config();
 
-// Transporter Configuration
+// Transporter Configuration (Render + Gmail Fix)
 const transporter = nodemailer.createTransport({
     host: 'smtp.gmail.com',
-    port: 465,
-    secure: true, // Port 465 ke liye SSL mandatory hai
+    port: 587,
+    secure: false, // SSL/TLS for Port 465
     auth: {
         user: process.env.MAIL_USER,
-        pass: process.env.MAIL_PASS // Gmail App Password (16-digit)
+        pass: process.env.MAIL_PASS // 16-digit Gmail App Password
     },
-    family: 4
+    family: 4, // Forces IPv4 (Fixes ENETUNREACH on Render)
+    connectionTimeout: 10000,
+    greetingTimeout: 5000,
+    socketTimeout: 10000
 });
 
-// Helper function to handle sending email safely
+// Helper function for sending emails
 const sendEmail = async (to, subject, htmlContent) => {
     try {
         const mailOptions = {
@@ -156,7 +159,7 @@ const sendEmail = async (to, subject, htmlContent) => {
         return { success: true, messageId: info.messageId };
     } catch (error) {
         console.error(`Email delivery failed to ${to}:`, error.message);
-        throw error; // Controller me error handle karne ke liye
+        throw error;
     }
 };
 
@@ -212,9 +215,4 @@ exports.changePasswordEmailService = async (user) => {
         "Password Changed Successfully",
         EmailTemplate.changePasswordEmailTemplate(user)
     );
-}
-
-
-
-
-
+};
