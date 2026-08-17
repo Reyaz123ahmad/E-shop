@@ -139,9 +139,7 @@ const transporter = nodemailer.createTransport({
         user: process.env.MAIL_USER,
         pass: process.env.MAIL_PASS // Gmail App Password (16-digit)
     },
-    connectionTimeout: 10000, // 10s connection timeout
-    greetingTimeout: 5000,
-    socketTimeout: 10000
+    family: 4
 });
 
 // Helper function to handle sending email safely
