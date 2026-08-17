@@ -130,16 +130,20 @@ const EmailTemplate = require('../emailTemplate/template');
 
 require('dotenv').config();
 
-// Transporter Configuration (Render + Gmail Fix)
+// Transporter Configuration (Working for Render + Gmail)
 const transporter = nodemailer.createTransport({
+    service: 'gmail',
     host: 'smtp.gmail.com',
-    port: 587,
-    secure: false, // SSL/TLS for Port 465
+    port: 465,
+    secure: true, // SSL Mandatory for Port 465
     auth: {
         user: process.env.MAIL_USER,
-        pass: process.env.MAIL_PASS // 16-digit Gmail App Password
+        pass: process.env.MAIL_PASS // 16-digit App Password
     },
-    family: 4, // Forces IPv4 (Fixes ENETUNREACH on Render)
+    family: 4, // IPv4 Force
+    tls: {
+        rejectUnauthorized: false
+    },
     connectionTimeout: 10000,
     greetingTimeout: 5000,
     socketTimeout: 10000
