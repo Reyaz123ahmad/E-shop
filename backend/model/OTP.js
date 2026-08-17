@@ -20,9 +20,17 @@ const otpSchema = new mongoose.Schema({
 })
 
 
-otpSchema.pre('save', async function() {
+otpSchema.pre('save', async function(next) {
     if(this.isNew){
-        await emailService.otpEmailService(this.email, this.otp)
+        try {
+            await emailService.otpEmailService(this.email, this.otp);
+            next();
+        } catch (error) {
+            console.error("Email delivery failed inside schema pre-save:", error);
+            next(error); 
+        }
+    } else {
+        next();
     }
     
 })

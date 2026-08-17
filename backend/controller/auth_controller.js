@@ -14,7 +14,60 @@ FRONTEND_URL.config()
 
 
 // Simpler OTP generation without while loop
-exports.OTP = async(req, res) => {
+// exports.OTP = async(req, res) => {
+//     try {
+//         console.log("Otp controller hit");
+//         const { email } = req.body;
+        
+//         if(!email) {
+//             return res.status(400).json({
+//                 success: false,
+//                 message: "Email is required"
+//             });
+//         }
+
+//         // Check if user exists
+//         const user = await User.findOne({email});
+//         if(user) {
+//             return res.status(400).json({
+//                 success: false,
+//                 message: "Email already exists, please try with another email"
+//             });
+//         }
+
+//         // Generate OTP (simpler approach)
+//         const otp = Math.floor(100000 + Math.random() * 900000).toString();
+        
+//         console.log(`Generated OTP for ${email}: ${otp}`);
+
+//         // Delete any existing OTP for this email (optional)
+//         await OTP.deleteMany({ email: email });
+
+//         // Save OTP to database
+//         const otpPayload = { email, otp };
+//         const newOtp = await OTP.create(otpPayload);
+
+//         return res.status(200).json({
+//             success: true,
+//             message: "OTP sent successfully",
+            
+//         });
+        
+//     } catch(err) {
+//         console.error("Error:", err);
+//         return res.status(500).json({
+//             success: false,
+//             message: "Server error",
+//             error: err.message
+//         });
+//     }
+// };
+
+
+
+
+
+exports.sendOTP = async(req, res) => { 
     try {
         console.log("Otp controller hit");
         const { email } = req.body;
@@ -35,33 +88,33 @@ exports.OTP = async(req, res) => {
             });
         }
 
-        // Generate OTP (simpler approach)
+        // Generate OTP
         const otp = Math.floor(100000 + Math.random() * 900000).toString();
-        
         console.log(`Generated OTP for ${email}: ${otp}`);
 
-        // Delete any existing OTP for this email (optional)
+        // Delete any existing OTP for this email
         await OTP.deleteMany({ email: email });
 
-        // Save OTP to database
+       
         const otpPayload = { email, otp };
         const newOtp = await OTP.create(otpPayload);
 
         return res.status(200).json({
             success: true,
-            message: "OTP sent successfully",
-            
+            message: "OTP sent successfully"
         });
         
     } catch(err) {
-        console.error("Error:", err);
+        
+        console.error("Error in OTP Controller:", err);
         return res.status(500).json({
             success: false,
-            message: "Server error",
+            message: "Failed to process OTP/Email delivery",
             error: err.message
         });
     }
 };
+
 
 // Signup
 exports.signup = async(req, res) =>{
