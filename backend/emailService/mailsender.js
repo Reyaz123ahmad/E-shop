@@ -1,129 +1,3 @@
-// const nodemailer = require('nodemailer')
-// const EmailTemplate = require('../emailTemplate/template')
-
-// require('dotenv').config()
-// const transporter = nodemailer.createTransport({
-//     // host: process.env.MAIL_HOST,
-//     service: 'gmail',
-//     port: 587,
-//     secure: false,
-//     auth: {
-//         user: process.env.MAIL_USER,
-//         pass: process.env.MAIL_PASS
-//     },
-//      // ✅ YEH ADD KARO - IPv4 force karo
-//     family: 4,  // 4 = IPv4, 6 = IPv6
-//     tls: {
-//         rejectUnauthorized: false
-//     }
-// })
-
-// exports.otpEmailService = async(email, otp) =>{
-//     try{
-//         const emailOptions = {
-//             from: process.env.MAIL_USER,
-//             to: email,
-//             subject: "OTP for registration completeion",
-//             html: EmailTemplate.otpEmailTemplate(otp)
-//         }
-
-//         const result = await transporter.sendMail(emailOptions)
-//         return result
-//     }catch(err){
-//         console.log("Error in Otp Email Sending", err)
-//     }
-// }
-
-// exports.welcomeEmailService = async(newUser) =>{
-//     try{
-//         const emailOptions = {
-//             from: process.env.MAIL_USER,
-//             to: newUser.email,
-//             subject: "Welcome Email",
-//             html: EmailTemplate.welcomeEmailTemplate(newUser)
-//         }
-
-//         const result = await transporter.sendMail(emailOptions)
-//         return result
-//     }catch(err){
-//         console.log("Error in Welcome Email Sending", err)
-//     }
-// }
-
-// exports.orderConfirmationEmailService = async(user, order) =>{
-//     try{
-//         const emailOptions = {
-//             from: process.env.MAIL_USER,
-//             to: user.email,
-//             subject: "Order confirmation email",
-//             html: EmailTemplate.orderConfirmationEmailTemplate(user, order)
-//         }
-
-//         const result = await transporter.sendMail(emailOptions)
-//         return result
-//     }catch(err){
-//         console.log("Error in order conformation email sending", err)
-//     }
-// }
-
-// exports.sellerOrderConfirmationEmailService = async(user, sellerDetails, order) =>{
-//     try{
-//         const emailOptions = {
-//             from: process.env.MAIL_USER,
-//             to: sellerDetails.sellerEmail,
-//             subject: "Seller order notification",
-//             html: EmailTemplate.sellerOrderEmailTemplate(user, sellerDetails, order)
-//         }
-//         const result = await transporter.sendMail(emailOptions)
-//         return result
-//     }catch(err){
-//         console.log("Error in seller order confirmation email sending", err)
-//     }
-// }
-
-// exports.forgotPasswordEmailService = async(user, resetUrl) =>{
-//     try{
-//         const emailOptions = {
-//             from: process.env.MAIL_USER,
-//             to: user.email,
-//             subject: "Forgot password reset link email",
-//             html: EmailTemplate.forgotPasswordEmailTemplate(user, resetUrl)
-//         }
-//         const result = await transporter.sendMail(emailOptions)
-//         return result
-//     }catch(err){
-//         console.log("Error in forgot password email sending", err)
-//     }
-// }
-
-// exports.changePasswordEmailService = async(user) =>{
-//     try{
-//         const emailOptions = {
-//             from: process.env.MAIL_USER,
-//             to: user.email,
-//             subject: "Change password confirmation email",
-//             html: EmailTemplate.changePasswordEmailTemplate(user)
-//         }
-//         const result = await transporter.sendMail(emailOptions)
-//         return result
-//     }catch(err){
-//         console.log("Error in change password confirmation email sending", err)
-//     }
-// }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 const nodemailer = require('nodemailer');
 const EmailTemplate = require('../emailTemplate/template');
@@ -132,28 +6,21 @@ require('dotenv').config();
 
 // Transporter Configuration (Working for Render + Gmail)
 const transporter = nodemailer.createTransport({
-    service: 'gmail',
-    host: 'smtp.gmail.com',
-    port: 465,
-    secure: true, // SSL Mandatory for Port 465
+    host: 'smtp-relay.brevo.com',
+    port: 587,
+    secure: false, 
     auth: {
         user: process.env.MAIL_USER,
-        pass: process.env.MAIL_PASS // 16-digit App Password
+        pass: process.env.MAIL_PASS 
     },
-    family: 4, // IPv4 Force
-    tls: {
-        rejectUnauthorized: false
-    },
-    connectionTimeout: 10000,
-    greetingTimeout: 5000,
-    socketTimeout: 10000
+    
 });
 
 // Helper function for sending emails
 const sendEmail = async (to, subject, htmlContent) => {
     try {
         const mailOptions = {
-            from: `"E-Shop" <${process.env.MAIL_USER}>`,
+            from: `"E-Shop" <${process.env.MAIL_FROM}>`,
             to,
             subject,
             html: htmlContent
