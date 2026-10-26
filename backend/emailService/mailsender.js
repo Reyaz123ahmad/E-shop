@@ -1,33 +1,33 @@
-
-const nodemailer = require('nodemailer');
 const EmailTemplate = require('../emailTemplate/template');
 
 require('dotenv').config();
-
-// Transporter Configuration (Working for Render + Gmail)
-const transporter = nodemailer.createTransport({
-    host: 'smtp-relay.brevo.com',
-    port: 587,
-    secure: false, 
-    auth: {
-        user: process.env.MAIL_USER,
-        pass: process.env.MAIL_PASS 
-    },
-    
-});
-
-// Helper function for sending emails
 const sendEmail = async (to, subject, htmlContent) => {
     try {
-        const mailOptions = {
-            from: `"E-Shop" <${process.env.MAIL_FROM}>`,
-            to,
-            subject,
-            html: htmlContent
-        };
+        const response = await fetch("https://api.brevo.com/v3/smtp/email", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "api-key": process.env.BREVO_API_KEY, 
+            },
+            body: JSON.stringify({
+                sender: {
+                    name: "E-Shop",
+                    email: process.env.MAIL_FROM, 
+                },
+                to: [{ email: to }],
+                subject: subject,
+                htmlContent: htmlContent,
+            }),
+        });
 
-        const info = await transporter.sendMail(mailOptions);
-        return { success: true, messageId: info.messageId };
+        const result = await response.json();
+
+        if (!response.ok) {
+            throw new Error(`Brevo API error: ${JSON.stringify(result)}`);
+        }
+
+        return { success: true, messageId: result.messageId };
+        
     } catch (error) {
         console.error(`Email delivery failed to ${to}:`, error.message);
         throw error;
